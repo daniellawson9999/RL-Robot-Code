@@ -176,6 +176,8 @@ public class CsDriving extends LinearOpMode {
     }
 
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
+        leftInches = -leftInches;
+        rightInches=  -rightInches;
         int newLeftTarget;
         int newRightTarget;
 

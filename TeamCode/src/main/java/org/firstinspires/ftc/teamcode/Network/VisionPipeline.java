@@ -18,4 +18,5 @@ public class VisionPipeline extends OpenCVPipeline {
         imagedUpdated = true;
         return rgba;
     }
+
 }

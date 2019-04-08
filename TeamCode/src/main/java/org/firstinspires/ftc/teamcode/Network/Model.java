@@ -70,7 +70,7 @@ public class Model {
 
 
     public enum Action{
-        Left,Right,Forwards,Backwards,CC,CCW
+        Left,Right,Forwards,Backwards,CW,CCW
     }
 
     public Action predict(Mat mat){
@@ -97,7 +97,7 @@ public class Model {
         Action actionName = actions[action];
         return actionName;
     }
-
+    //k-means clustering will go here
     public Mat processFrame(Mat frame){
         return frame;
     }
