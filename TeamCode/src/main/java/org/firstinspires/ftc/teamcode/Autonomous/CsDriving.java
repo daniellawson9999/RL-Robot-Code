@@ -47,9 +47,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.Network.Model;
-import org.firstinspires.ftc.teamcode.Network.Model.Action;
 import org.firstinspires.ftc.teamcode.Network.VisionPipeline;
+import org.firstinspires.ftc.teamcode.Network.VisionPipeline.Model;
+import org.firstinspires.ftc.teamcode.Network.VisionPipeline.Action;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -96,10 +96,8 @@ public class CsDriving extends LinearOpMode {
     static final double     TURN_SPEED              = 1;
 
     BNO055IMU imu;
-    public String modelName = "cnnrandomL";
-    public boolean useModel = false;
-    public Action[] actions = {Action.Forwards,Action.Left,Action.Right};
-    public Model model;
+    public String modelName = "cnnrandomP1";
+    public Action[] actions = {Action.Forwards,Action.CW,Action.CCW};
     public boolean usePipeline = false;
     public VisionPipeline pipeline = null;
     public WebcamName webcamName;
@@ -146,14 +144,9 @@ public class CsDriving extends LinearOpMode {
 
             String VUFORIA_KEY = "AVtZQ6n/////AAABmdcWQU7kykWgmYCE0DI/QOReCtZljUv/ks9BxJvDlzzFaMhm4I4BBhWA8BDMwM6wDclf7C3Uejvm+pnib7YV+D/n8iAQdR7MAGlBGRqXbUPG1HwHfKCK27WTAuNxHilwwMcEIyPjgJY+9ozAZtnbaWzCDZjrNC1WlClxqnGMT5qO93K2ARRy+3FKtNV93opS7YAVfhRSNxWh/bBRa05OWKjB41PdctoT1IWWsabSad2Fvj7qzasRnG+cmO2ePVMxIwEPC2w1K6gQSFBsk97Sku2EmqgsnRYNzqnXpPn/tXhsQhmiTpWkZUnZTfTsnx3jxB6vdfoZA+JKBqrlfqqqxiBWLx72h0f31ek6TuwdwTTd";
             pipeline.VUFORIA_KEY = VUFORIA_KEY;
-
+            pipeline.initModel(modelName,actions);
             pipeline.init(hardwareMap.appContext,CameraViewDisplay.getInstance(), DogeCV.CameraMode.WEBCAM, false, webcamName);
-
             pipeline.enable();
-
-        }
-        if(useModel){
-            model = new Model(telemetry, modelName,actions);
         }
 
         waitForStart();
@@ -176,8 +169,6 @@ public class CsDriving extends LinearOpMode {
     }
 
     public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
-        leftInches = -leftInches;
-        rightInches=  -rightInches;
         int newLeftTarget;
         int newRightTarget;
 

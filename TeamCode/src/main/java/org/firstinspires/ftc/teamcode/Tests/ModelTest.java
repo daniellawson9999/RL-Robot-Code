@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Autonomous.CsDriving;
 
-import org.firstinspires.ftc.teamcode.Network.Model;
-import org.firstinspires.ftc.teamcode.Network.Model.Action;
+import org.firstinspires.ftc.teamcode.Network.VisionPipeline.Action;
 import org.opencv.core.Size;
 
 @Autonomous(name="ModelTest", group="Cs")
