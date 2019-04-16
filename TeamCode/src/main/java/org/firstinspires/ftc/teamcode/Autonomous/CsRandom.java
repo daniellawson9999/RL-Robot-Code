@@ -16,11 +16,11 @@ import org.opencv.core.Size;
 public class CsRandom extends CsDriving {
     int forwardDistance  = 3;
     int turnAngle = 5;
-    int timeout = 5000;
+    int timeout = 2;
     public void runOpMode()
     {
         super.usePipeline = true;
-        super.modelName = "cnnrandomP1";
+        super.modelName = "cnnrandomRCP";
         Action[] actions = {Action.Forwards,Action.CW,Action.CCW};
         super.actions = actions;
         super.runOpMode();
@@ -31,11 +31,12 @@ public class CsRandom extends CsDriving {
                 //telemetry.update();
                 Action action= pipeline.predictAction();
                 telemetry.addData("Taking action: ",action);
+                telemetry.update();
                 if(action == Action.Forwards) {
                     encoderDrive(1,forwardDistance,forwardDistance,timeout);
-                }else if (action == Action.CW) {
+                }else if (action == Action.CCW) {
                     relativeGyroDrive(-turnAngle,"z",1,timeout);
-                }else if (action ==  Action.CCW) {
+                }else if (action ==  Action.CW) {
                     relativeGyroDrive(turnAngle,"z",1,timeout);
 
                 }else {

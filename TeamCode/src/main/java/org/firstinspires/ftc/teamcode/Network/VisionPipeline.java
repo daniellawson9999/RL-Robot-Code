@@ -28,6 +28,7 @@ public class VisionPipeline extends OpenCVPipeline {
     public Mat processFrame(Mat rgba, Mat gray) {
         rgba.copyTo(workingMat);
         Imgproc.cvtColor(workingMat,workingMat,Imgproc.COLOR_RGBA2RGB);
+        //telemetry.addData("chanels: ",rgba.channels());
         imagedUpdated = true;
         return rgba;
     }
@@ -38,12 +39,26 @@ public class VisionPipeline extends OpenCVPipeline {
     //Copy working mat into another matrix before passing it to model.predict to prevent overwriting (may be unnessary)
     public Action predictAction(){
         Mat copy = new Mat();
+        //Mat save = new Mat();
+
+
         workingMat.copyTo(copy);
         Core.rotate(copy,copy,Core.ROTATE_90_COUNTERCLOCKWISE);
         //write to a file for testing
-        //Imgcodecs.imwrite("/sdcard/FIRST/Photos/test.png",copy);
-        copy.convertTo(copy,CvType.CV_64F);
+
+        //copy.copyTo(save);
+        //save.convertTo(save,Imgproc.COLOR_RGBA2BGR);
+        //Imgproc.cvtColor(save,save,Imgproc.COLOR_RGBA2BGR);
+        //Imgcodecs.imwrite("/sdcard/FIRST/Photos/original.png",save);
+
         Imgproc.resize(copy,copy,new Size(copy.width()/16,copy.height()/16));
+
+        //copy.copyTo(save);
+        //Imgproc.cvtColor(save,save,Imgproc.COLOR_RGBA2BGR);
+        //Imgcodecs.imwrite("/sdcard/FIRST/Photos/resized.png",save);
+
+        copy.convertTo(copy,CvType.CV_32F);
+
         return model.predict(copy);
     }
     //The bug is probably right here, if the first Action.Left as an int value of 1 this may be a problem
@@ -104,7 +119,7 @@ public class VisionPipeline extends OpenCVPipeline {
                  for (int j = 0; j < width; j++){
                      //get the r,b,g array at index k,j, scale to 0-1, and store
                      double[] element = mat.get(k,j);
-                     for (int l = 0; l < element.length; l++){
+                     for (int l = 0; l < 3; l++){
                          imageArray[0][k][j][l] = (float) (element[l] / 255);
                     }
                  }
@@ -127,7 +142,7 @@ public class VisionPipeline extends OpenCVPipeline {
                 model.runForMultipleInputsOutputs(inputs,outputs);
                 //store the value of the action
                 values[i] = output[0][0];
-                telemetry.addData("Action: ",i);
+                telemetry.addData("Action: ",actions[i]);
                 telemetry.addData("Value: ", values[i]);
            }
             //find the index of the action w/ max value
@@ -141,7 +156,7 @@ public class VisionPipeline extends OpenCVPipeline {
             }
             telemetry.addData("max action: ", action);
             telemetry.addData("max value: ", value);
-            telemetry.update();
+            //telemetry.update();
             //get and return the name of the action
             Action actionName = actions[action];
             return actionName;
