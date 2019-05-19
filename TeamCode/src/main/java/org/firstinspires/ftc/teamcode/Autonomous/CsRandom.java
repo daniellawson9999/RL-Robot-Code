@@ -20,7 +20,7 @@ public class CsRandom extends CsDriving {
     public void runOpMode()
     {
         super.usePipeline = true;
-        super.modelName = "cnnrandomRCP";
+        super.modelName = "cnnrandomRCPT";
         Action[] actions = {Action.Forwards,Action.CW,Action.CCW};
         super.actions = actions;
         super.runOpMode();
