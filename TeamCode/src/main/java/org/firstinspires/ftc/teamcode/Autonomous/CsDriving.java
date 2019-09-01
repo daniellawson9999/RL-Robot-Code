@@ -97,6 +97,7 @@ public class CsDriving extends LinearOpMode {
 
     BNO055IMU imu;
     public String modelName = "cnnrandomP1";
+    public boolean SA_TO_Q = true;
     public Action[] actions = {Action.Forwards,Action.CW,Action.CCW};
     public boolean usePipeline = false;
     public VisionPipeline pipeline = null;
@@ -145,7 +146,7 @@ public class CsDriving extends LinearOpMode {
             String VUFORIA_KEY = "AVtZQ6n/////AAABmdcWQU7kykWgmYCE0DI/QOReCtZljUv/ks9BxJvDlzzFaMhm4I4BBhWA8BDMwM6wDclf7C3Uejvm+pnib7YV+D/n8iAQdR7MAGlBGRqXbUPG1HwHfKCK27WTAuNxHilwwMcEIyPjgJY+9ozAZtnbaWzCDZjrNC1WlClxqnGMT5qO93K2ARRy+3FKtNV93opS7YAVfhRSNxWh/bBRa05OWKjB41PdctoT1IWWsabSad2Fvj7qzasRnG+cmO2ePVMxIwEPC2w1K6gQSFBsk97Sku2EmqgsnRYNzqnXpPn/tXhsQhmiTpWkZUnZTfTsnx3jxB6vdfoZA+JKBqrlfqqqxiBWLx72h0f31ek6TuwdwTTd";
             pipeline.VUFORIA_KEY = VUFORIA_KEY;
             pipeline.telemetry = telemetry;
-            pipeline.initModel(modelName,actions);
+            pipeline.initModel(modelName,actions,SA_TO_Q);
             pipeline.init(hardwareMap.appContext,CameraViewDisplay.getInstance(), DogeCV.CameraMode.WEBCAM, false, webcamName);
             pipeline.enable();
         }

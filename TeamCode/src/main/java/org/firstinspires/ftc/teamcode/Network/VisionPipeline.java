@@ -33,8 +33,8 @@ public class VisionPipeline extends OpenCVPipeline {
         return rgba;
     }
     //initialize the model
-    public void initModel(String modelName, Action[] actions){
-        model = new Model(modelName,actions);
+    public void initModel(String modelName, Action[] actions, boolean SA_TO_Q){
+        model = new Model(modelName,actions, SA_TO_Q);
     }
     //Copy working mat into another matrix before passing it to model.predict to prevent overwriting (may be unnessary)
     public Action predictAction(){
@@ -69,17 +69,17 @@ public class VisionPipeline extends OpenCVPipeline {
     //Model object class which manages the tensorflow Interpreter 
     public class Model {
     	//Array of available actions (order matters)
+        public boolean SA_TO_Q;
         public Action[] actions;
         //The tensorflow interpreter
         public Interpreter model;
 
         //Model constructor
-        public Model(String modelName, Action[] actions){
+        public Model(String modelName, Action[] actions, boolean SA_TO_Q){
 
 
             this.actions = actions;
-
-
+            this.SA_TO_Q = SA_TO_Q;
             String baseDirectory = "/sdcard/FIRST/CS/";
             String path = baseDirectory + modelName + ".tflite";
             File f = new File(path);
@@ -128,23 +128,34 @@ public class VisionPipeline extends OpenCVPipeline {
             //telemetry.addData("imageArray widdthh:",imageArray[0][0].length);
             //telemetry.addData("imageArray channels:",imageArray[0][0][0].length);
             //telemetry.update();
-            for (int i = 0; i < numActions; i++){
-            	//create a one-hot array for each action
-                float[][] actionInput = new float[1][numActions];
-                actionInput[0][i] = 1;
+            if (SA_TO_Q){
+                for (int i = 0; i < numActions; i++){
+                    //create a one-hot array for each action
+                    float[][] actionInput = new float[1][numActions];
+                    actionInput[0][i] = 1;
 
-                //create object array to pass to tensorflow and to receive output
-                Object[] inputs = {imageArray,actionInput};
-                float[][] output = new float[1][1];
-                Map<Integer,Object> outputs = new HashMap();
-                outputs.put(0,output);
-                //run the model!
-                model.runForMultipleInputsOutputs(inputs,outputs);
-                //store the value of the action
-                values[i] = output[0][0];
-                telemetry.addData("Action: ",actions[i]);
-                telemetry.addData("Value: ", values[i]);
-           }
+                    //create object array to pass to tensorflow and to receive output
+                    Object[] inputs = {imageArray,actionInput};
+                    float[][] output = new float[1][1];
+                    Map<Integer,Object> outputs = new HashMap();
+                    outputs.put(0,output);
+                    //run the model!
+                    model.runForMultipleInputsOutputs(inputs,outputs);
+                    //store the value of the action
+                    values[i] = output[0][0];
+                    telemetry.addData("Action: ",actions[i]);
+                    telemetry.addData("Value: ", values[i]);
+                }
+            }else{
+                float[][] output= new float[1][actions.length];
+                model.run(imageArray,output);
+                //copy to values array
+                for(int i=0; i<values.length;i++){
+                    values[i] = output[0][i];
+                    telemetry.addData("Action: ",actions[i]);
+                    telemetry.addData("Value: ", values[i]);
+                }
+            }
             //find the index of the action w/ max value
             int action = 0;
             double value = values[0];
